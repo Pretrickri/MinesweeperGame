@@ -1,0 +1,41 @@
+    1- Make the board:
+        - Focus on the programming logic first,
+        - Randomize bomb locations
+    2- Click and Reveal the square - big function with other functions within - Event Listener
+        - If there's a bomb, you lost (function for losing)
+            - Mark all bomb locations in Red
+        - If it is a tile with number, reveal its number (function for adjacent mines)
+            - Make the numbers when you build the board. Then only reveal it when clicked. Leads to higher performance.
+        - If there's nothing, reveal all empty spaces. This will be tricky, I assume.
+    3- Mark Squares
+        - Event Listener for right click of the mouse.
+    4- Check for win...
+        - Check the number of remaining squares to reveal. If it is 0, then win. You can get that number by subtracting the total number of squares in the beginning of the game and the number of mines. Then every time you reveal an area, you subtract the number of revealed squares to this total number. Doesn't seem very smart tho.
+
+    Optimizing Questions:
+    - How can I perform the most amount of operations right in the beginning of the game? That should make revealing squares faster.
+
+
+    --------------------------
+    What are the Tiles?
+    - Objects (Make a Class for this), where they have the following states:
+        - Hidden, Marked, Mine, Number.
+    - Methods:
+        - Reveal Method. Somehow connect its state with the CSS graphics for it. For example, if the state is "Number", it should show the number of adjacent mines.
+
+    Class Tiles: element ("current state"), x, y, get and set, mine (bool), adjMines (number).
+    - Mine Tile would have mine === true.
+    - Number Tile would have adjMines > 0
+    - Empty Tile would have adjMines === 0
+        - in this case we don't have to print 0 to the screen.
+
+    ----------------------------
+    How are we building the board?
+    - No surprise we are doing a nested for loop.
+    The minesweeper.js will have the functions to create the board and game management.
+    The client.js will have the execution of the game itself!
+
+    - For the board we create a matrix (2D-array)
+    - Making Rows: Each element receives i and j as their x and y coordinates.
+        - The coordinates will be inverted: so when we walk down the board we walk in the x-axis and going to the right we walk on the y-axis.
+      Then we 

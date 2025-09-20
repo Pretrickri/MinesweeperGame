@@ -1,10 +1,10 @@
 export class Tile{
-    constructor(x,y, adjMines){
+    constructor(x,y){
         this.element = "hidden";
         this.x = x;
         this.y = y;
         this.mine = false;
-        this.adjMines = adjMines;
+        this.adjMines = 0;
     }
 
     getElement(){
