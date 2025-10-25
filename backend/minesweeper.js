@@ -83,7 +83,7 @@ export function flagTile(tile){
  * @param {Tile} tile - the tile to be revealed
  * @returns {boolean} - true if the tile was a mine, false otherwise
  */
-export function revealTile(tile){
+export function revealTileIndividual(tile){
     if(tile.getState() === "revealed"){
         return false;
     }
@@ -95,4 +95,21 @@ export function revealTile(tile){
         tile.setState("revealed");
         return false;
     }
+}
+
+/**
+ * Reveals tile if it has 0 adjacent mines.
+ * @param {Tile} tile - the tile to be revealed 
+ * @returns {boolean} - true if tile has 0 adjacent mines, false otherwise
+ */
+export function revealTileRecursive(tile){
+    if(tile.adjMines !== 0){
+        return false;
+    }
+    if(tile.getState() === "revealed"){
+        return false;
+    }
+    
+    tile.setState("revealed");
+    return true;
 }
