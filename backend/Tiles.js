@@ -24,14 +24,14 @@ export class Tile{
      * Gets the state of the Tile.
      * @returns {string} - the state in which the Tile is currently.
      */
-    getElement(){
+    getState(){
         return this.state;
     }
     /**
      * Sets the state of the Tile.
      * @param {string} state - the new state to se the Tile to. 
      */
-    setElement(state){
+    setState(state){
         this.state = state;
     }
     /**

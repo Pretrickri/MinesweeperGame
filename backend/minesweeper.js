@@ -64,3 +64,35 @@ export function addMines(board, numberOfMines){
         }
     }
 }
+
+/**
+ * Flags or unflags a given Tile.
+ * @param {Tile} tile - the Tile to flag or unflag
+ */
+export function flagTile(tile){
+    if(tile.getState() === "hidden"){
+        tile.setState("flagged");
+    }
+    else if(tile.getState() === "flagged"){
+        tile.setState("hidden");
+    }
+}
+
+/**
+ * Reveals a given Tile and returns whether it was a mine or not.
+ * @param {Tile} tile - the tile to be revealed
+ * @returns {boolean} - true if the tile was a mine, false otherwise
+ */
+export function revealTile(tile){
+    if(tile.getState() === "revealed"){
+        return false;
+    }
+    else if(tile.isMine()){
+        tile.setState("revealed");
+        return true;
+    }
+    else{
+        tile.setState("revealed");
+        return false;
+    }
+}
