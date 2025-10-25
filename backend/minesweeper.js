@@ -24,6 +24,32 @@ export function BuildBoard(size){
 }
 
 /**
+ * Sets the number of adjacent mines for each Tile in the board.
+ * @param {Board} board - the game board 
+ */
+export function setAdjacentMines(board){
+    board.forEach(row => {
+        row.forEach(tile => {
+            let mineCount = 0;
+            for(let i=-1; i<=1; i++){
+                for(let j=-1; j<=1; j++){
+                    const newX = tile.x + i;
+                    const newY = tile.y + j;
+                    if(newX >= 0 && newX < board.length &&
+                       newY >= 0 && newY < board.length){
+                        if(board[newX][newY].isMine()){
+                            mineCount++;
+                        }
+                    }
+                }
+            }
+            tile.adjMines = mineCount;
+        })
+    });
+
+}
+
+/**
  * Print an given board to the console. Shows coordinates and weather a Tile is a Mine or not.
  * @param {Board} board - the board to print
  * @example
@@ -38,7 +64,8 @@ export function PrintBoard(board){
             print_board += "(" +
                 board[i][j].x + "," +
                 board[i][j].y + ") = " +
-                board[i][j].isMine() + " || ";
+                board[i][j].isMine() + "; adjMines = " +
+                board[i][j].adjMines + " || ";
         }
         console.log(print_board);
     }
@@ -109,7 +136,7 @@ export function revealTileRecursive(tile){
     if(tile.getState() === "revealed"){
         return false;
     }
-    
+
     tile.setState("revealed");
     return true;
 }

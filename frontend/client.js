@@ -1,5 +1,6 @@
-import * as minesweeper from "./minesweeper.js";
+import * as minesweeper from "../backend/minesweeper.js";
 
-const board = minesweeper.BuildBoard(10);
-minesweeper.addMines(board, 10);
-//minesweeper.PrintBoard(board);
+const board = minesweeper.BuildBoard(3);
+minesweeper.addMines(board, 1);
+minesweeper.setAdjacentMines(board);
+minesweeper.PrintBoard(board);
