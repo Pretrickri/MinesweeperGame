@@ -12,8 +12,8 @@ export class Tile{
      * @param {number} x - x coordinate of the Tile in a board 
      * @param {number} y - y coordinate of the Tile in a board
      */
-    constructor(x,y){
-        this.state = "hidden";
+    constructor(x,y, state){
+        this.state = state;
         this.x = x;
         this.y = y;
         this.mine = false;
@@ -25,14 +25,14 @@ export class Tile{
      * @returns {string} - the state in which the Tile is currently.
      */
     getState(){
-        return this.state;
+        return this.state.dataset.status;
     }
     /**
      * Sets the state of the Tile.
      * @param {string} state - the new state to se the Tile to. 
      */
     setState(state){
-        this.state = state;
+        this.state.dataset.status = state;
     }
     /**
      * Checks wheather the Tile is a mine or not.

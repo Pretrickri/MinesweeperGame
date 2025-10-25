@@ -1,5 +1,12 @@
 import { Tile } from "./Tiles.js";
 
+export const TILE_STATES = {
+    HIDDEN: "hidden",
+    REVEALED: "revealed",
+    FLAGGED: "flagged",
+    MINE: "mine"
+};
+
 /**
  * A board is a 2D array of Tiles.
  * @typedef {Tile[][]} Board 
@@ -15,7 +22,9 @@ export function BuildBoard(size){
     for(let i=0; i<size; i++){
         const row = [];
         for(let j=0; j<size; j++){
-            const tile = new Tile(i,j);
+            const state = document.createElement('div');
+            state.dataset.status = TILE_STATES.HIDDEN;
+            const tile = new Tile(i,j, state);
             row.push(tile);
         }
         board.push(row);
@@ -97,11 +106,11 @@ export function addMines(board, numberOfMines){
  * @param {Tile} tile - the Tile to flag or unflag
  */
 export function flagTile(tile){
-    if(tile.getState() === "hidden"){
-        tile.setState("flagged");
+    if(tile.getState() === TILE_STATES.HIDDEN){
+        tile.setState(TILE_STATES.FLAGGED);
     }
-    else if(tile.getState() === "flagged"){
-        tile.setState("hidden");
+    else if(tile.getState() === TILE_STATES.FLAGGED){
+        tile.setState(TILE_STATES.HIDDEN);
     }
 }
 
@@ -111,15 +120,15 @@ export function flagTile(tile){
  * @returns {boolean} - true if the tile was a mine, false otherwise
  */
 export function revealTileIndividual(tile){
-    if(tile.getState() === "revealed"){
+    if(tile.getState() === TILE_STATES.REVEALED){
         return false;
     }
     else if(tile.isMine()){
-        tile.setState("revealed");
+        tile.setState(TILE_STATES.REVEALED);
         return true;
     }
     else{
-        tile.setState("revealed");
+        tile.setState(TILE_STATES.REVEALED);
         return false;
     }
 }
@@ -133,10 +142,10 @@ export function revealTileRecursive(tile){
     if(tile.adjMines !== 0){
         return false;
     }
-    if(tile.getState() === "revealed"){
+    if(tile.getState() === TILE_STATES.REVEALED){
         return false;
     }
 
-    tile.setState("revealed");
+    tile.setState(TILE_STATES.REVEALED);
     return true;
 }
