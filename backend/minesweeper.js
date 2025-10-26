@@ -119,7 +119,7 @@ export function flagTile(tile){
  * @param {Tile} tile - the tile to be revealed
  * @returns {boolean} - true if the tile was a mine, false otherwise
  */
-export function revealTileIndividual(tile){
+export function revealTileIndividual(tile, tilesLeft){
     if(tile.getState() === TILE_STATES.REVEALED){
         return false;
     }
@@ -128,6 +128,7 @@ export function revealTileIndividual(tile){
         return true;
     }
     else{
+        tilesLeft -= 1;
         tile.setState(TILE_STATES.REVEALED);
         return false;
     }
@@ -136,16 +137,32 @@ export function revealTileIndividual(tile){
 /**
  * Reveals tile if it has 0 adjacent mines.
  * @param {Tile} tile - the tile to be revealed 
- * @returns {boolean} - true if tile has 0 adjacent mines, false otherwise
+ * @returns {boolean} - true if you got to the end of the recursion, false otherwise
  */
-export function revealTileRecursive(tile){
+export function revealTileRecursive(tile, tilesLeft){
     if(tile.adjMines !== 0){
-        return false;
+        tilesLeft -= 1;
+        tile.setState(TILE_STATES.REVEALED);
+        return true;
     }
     if(tile.getState() === TILE_STATES.REVEALED){
-        return false;
+        return true;
     }
 
     tile.setState(TILE_STATES.REVEALED);
-    return true;
+    return false;
+}
+
+/**
+ * Runs the end game lose sequence, revealing all mines in the board.
+ * @param {Board} board - game board
+ */
+export function endGame(board){
+    board.forEach(row => {
+        row.forEach(tile => {
+            if(tile.isMine()){
+                tile.setState(TILE_STATES.REVEALED);
+            }
+        });
+    });
 }
