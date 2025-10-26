@@ -181,3 +181,23 @@ export function revealTile(tile, board, board_size){
         return false;
     }
 }
+
+/**
+ * Checks if the game is over after a tile is revealed.
+ * @param {Tile} tile - the tile that was just revealed 
+ * @param {Board} board - the game board
+ */
+export function checkEndGame(tile, board){
+    if(tile.isMine()){ // LOSE CONDITION
+        boardElement.addEventListener('click', stopProp, {capture: true});
+        boardElement.addEventListener('contextmenu', stopProp, {capture: true});
+        alert('You hit a mine! Game Over!');
+        minesweeper.endGame(board);
+    }
+    else if(getTilesLeft() === 0){ // WIN CONDITION
+        boardElement.addEventListener('click', stopProp, {capture: true});
+        boardElement.addEventListener('contextmenu', stopProp, {capture: true});
+        alert('You cleared the board! You win!');
+        minesweeper.endGame(board);
+    }
+}
