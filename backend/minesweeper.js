@@ -7,6 +7,16 @@ export const TILE_STATES = {
     MINE: "mine"
 };
 
+let tilesLeft = 0;
+
+/**
+ * Returns how many non-mine tiles are left to be revealed.
+ * @returns {number} - tilesLeft in the board
+ */
+export function getTilesLeft(){
+    return tilesLeft;
+}
+
 /**
  * A board is a 2D array of Tiles.
  * @typedef {Tile[][]} Board 
@@ -19,6 +29,7 @@ export const TILE_STATES = {
  */
 export function BuildBoard(size){
     const board = [];
+    tilesLeft = size * size;
     for(let i=0; i<size; i++){
         const row = [];
         for(let j=0; j<size; j++){
@@ -91,6 +102,7 @@ export function PrintBoard(board){
  * @param {number} numberOfMines - number of mines to add to the board
  */
 export function addMines(board, numberOfMines){
+    tilesLeft -= numberOfMines;
     for(let i=0; i<numberOfMines;i++){
         const randX = Math.floor(Math.random() * board.length);
         const randY = Math.floor(Math.random() * board.length);
@@ -115,45 +127,6 @@ export function flagTile(tile){
 }
 
 /**
- * Reveals a given Tile and returns whether it was a mine or not.
- * @param {Tile} tile - the tile to be revealed
- * @returns {boolean} - true if the tile was a mine, false otherwise
- */
-export function revealTileIndividual(tile, tilesLeft){
-    if(tile.getState() === TILE_STATES.REVEALED){
-        return false;
-    }
-    else if(tile.isMine()){
-        tile.setState(TILE_STATES.REVEALED);
-        return true;
-    }
-    else{
-        tilesLeft -= 1;
-        tile.setState(TILE_STATES.REVEALED);
-        return false;
-    }
-}
-
-/**
- * Reveals tile if it has 0 adjacent mines.
- * @param {Tile} tile - the tile to be revealed 
- * @returns {boolean} - true if you got to the end of the recursion, false otherwise
- */
-export function revealTileRecursive(tile, tilesLeft){
-    if(tile.adjMines !== 0){
-        tilesLeft -= 1;
-        tile.setState(TILE_STATES.REVEALED);
-        return true;
-    }
-    if(tile.getState() === TILE_STATES.REVEALED){
-        return true;
-    }
-
-    tile.setState(TILE_STATES.REVEALED);
-    return false;
-}
-
-/**
  * Runs the end game lose sequence, revealing all mines in the board.
  * @param {Board} board - game board
  */
@@ -165,4 +138,46 @@ export function endGame(board){
             }
         });
     });
+}
+
+/**
+ * Reveals a given Tile and returns whether it was a mine or not. If the tile has
+ * no adjacent mines, it reveals all adjacent tiles recursively.
+ * @param {Tile} tile - the tile to be revealed
+ * @param {Board} board - the game board
+ * @param {number} board_size - size of one side of the square board
+ * @returns {boolean} - true if the tile was a mine, false otherwise
+ */
+export function revealTile(tile, board, board_size){
+    if(tile.getState() === TILE_STATES.REVEALED){
+        return false;
+    }
+    else if(tile.isMine()){
+        tile.setState(TILE_STATES.REVEALED);
+        return true;
+    }
+    else if(tile.adjMines === 0){
+        tilesLeft--;
+        tile.state.textContent = "";
+        tile.setState(TILE_STATES.REVEALED);
+        for(let i=-1; i<=1; i++){
+        for(let j=-1; j<=1; j++){
+            const newX = tile.x + i;
+            const newY = tile.y + j;
+            if(newX >= 0 && newX < board_size &&
+                newY >= 0 && newY < board_size){
+                const adjacentTile = board[newX][newY];
+                if(adjacentTile.getState() !== TILE_STATES.REVEALED){
+                    revealTile(adjacentTile, board, board_size);
+                }
+            }
+        }
+    }
+    }
+    else{
+        tilesLeft--;
+        tile.state.textContent = tile.adjMines;
+        tile.setState(TILE_STATES.REVEALED);
+        return false;
+    }
 }
