@@ -8,6 +8,7 @@ export const TILE_STATES = {
 };
 
 let tilesLeft = 0;
+let minesLeft_flag = 0;
 
 /**
  * Returns how many non-mine tiles are left to be revealed.
@@ -15,6 +16,14 @@ let tilesLeft = 0;
  */
 export function getTilesLeft(){
     return tilesLeft;
+}
+
+/**
+ * Returns how many mines are left unflagged.
+ * @returns {number} - number of mines left
+ */
+export function getMinesLeft_flag(){
+    return minesLeft_flag;
 }
 
 /**
@@ -98,17 +107,40 @@ export function PrintBoard(board){
 */ 
 /**
  * Radomly adds mines to the given board.
+ * @param {Tile} tile - the first tile clicked by the user (should not be a mine)
  * @param {Board} board - the board to add mines to. 
  * @param {number} numberOfMines - number of mines to add to the board
  */
-export function addMines(board, numberOfMines){
+export function addMines(tile, board, numberOfMines){
     tilesLeft -= numberOfMines;
+    minesLeft_flag = numberOfMines;
+    const coordPool = new Map();
+    coordPool.set(tile.x, tile.y); // First clicked tile should not be a mine
+    
     for(let i=0; i<numberOfMines;i++){
         const randX = Math.floor(Math.random() * board.length);
         const randY = Math.floor(Math.random() * board.length);
 
-        if(!(board[randX][randY].isMine())){
+/*  UPDATE - try Fisher-Yates algorithm shuffle (gemini)
+        if(coordPool.has(randX)){
+            i--;
+            continue;
+        }
+        else if(coordPool.get(randX) === randY){
+            i--;
+            continue;
+        }
+        else{
+            coordPool.set(randX, randY);
             board[randX][randY].setMine();
+        }
+*/
+
+        if((randX !== tile.x) && (randY !== tile.y) && !(board[randX][randY].isMine())){
+            board[randX][randY].setMine();
+        }
+        else{
+            i--;
         }
     }
 }
@@ -120,9 +152,11 @@ export function addMines(board, numberOfMines){
 export function flagTile(tile){
     if(tile.getState() === TILE_STATES.HIDDEN){
         tile.setState(TILE_STATES.FLAGGED);
+        minesLeft_flag--;
     }
     else if(tile.getState() === TILE_STATES.FLAGGED){
         tile.setState(TILE_STATES.HIDDEN);
+        minesLeft_flag++;
     }
 }
 
@@ -134,7 +168,7 @@ export function endGame(board){
     board.forEach(row => {
         row.forEach(tile => {
             if(tile.isMine()){
-                tile.setState(TILE_STATES.REVEALED);
+                tile.setState(TILE_STATES.MINE);
             }
         });
     });
@@ -146,15 +180,11 @@ export function endGame(board){
  * @param {Tile} tile - the tile to be revealed
  * @param {Board} board - the game board
  * @param {number} board_size - size of one side of the square board
- * @returns {boolean} - true if the tile was a mine, false otherwise
  */
 export function revealTile(tile, board, board_size){
-    if(tile.getState() === TILE_STATES.REVEALED){
-        return false;
-    }
-    else if(tile.isMine()){
-        tile.setState(TILE_STATES.REVEALED);
-        return true;
+    if(tile.isMine()){
+        tile.setState(TILE_STATES.MINE);
+        return;
     }
     else if(tile.adjMines === 0){
         tilesLeft--;
@@ -178,26 +208,5 @@ export function revealTile(tile, board, board_size){
         tilesLeft--;
         tile.state.textContent = tile.adjMines;
         tile.setState(TILE_STATES.REVEALED);
-        return false;
-    }
-}
-
-/**
- * Checks if the game is over after a tile is revealed.
- * @param {Tile} tile - the tile that was just revealed 
- * @param {Board} board - the game board
- */
-export function checkEndGame(tile, board){
-    if(tile.isMine()){ // LOSE CONDITION
-        boardElement.addEventListener('click', stopProp, {capture: true});
-        boardElement.addEventListener('contextmenu', stopProp, {capture: true});
-        alert('You hit a mine! Game Over!');
-        minesweeper.endGame(board);
-    }
-    else if(getTilesLeft() === 0){ // WIN CONDITION
-        boardElement.addEventListener('click', stopProp, {capture: true});
-        boardElement.addEventListener('contextmenu', stopProp, {capture: true});
-        alert('You cleared the board! You win!');
-        minesweeper.endGame(board);
     }
 }

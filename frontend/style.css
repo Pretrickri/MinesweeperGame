@@ -51,10 +51,10 @@ body {
   background-color: red;
 }
 
-.board > [data-status="number"] {
+.board > [data-status="revealed"] {
   background-color: none;
 }
 
-.board > [data-status="marked"] {
+.board > [data-status="flagged"] {
   background-color: yellow;
 }
