@@ -1,14 +1,18 @@
 import * as minesweeper from "../backend/minesweeper.js";
 import { Tile } from "../backend/Tiles.js";
 
-const BOARD_SIZE = 3;
-const NUM_MINES = 7;
+const BOARD_SIZE = 10;
+const NUM_MINES = 15;
 const board = minesweeper.BuildBoard(BOARD_SIZE);
 const boardElement = document.querySelector('.board');
 const textElement = document.querySelector('.subtext');
 let gameStart = false;
 
-//minesweeper.PrintBoard(board);
+/*
+    UPGRADE NOTE:
+    It would be nice to have a way to set the number of mines and board size
+    from a menu as soon as you run the site.
+*/
 
 board.forEach(row => {
     row.forEach(tile => {
